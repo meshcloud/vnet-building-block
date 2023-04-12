@@ -29,11 +29,6 @@ variable "address_space_workload" {
 # Azure variables
 #
 
-variable "azure_tenant_id" {
-  description = "Azure Tenant ID where the managed tenants (subscriptions) as well as the network hub are located in."
-  type        = string
-}
-
 variable "hub_subscription_id" {
   description = "Subscription ID of the subscription, the network hub is located in."
   type        = string
