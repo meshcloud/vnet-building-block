@@ -82,9 +82,8 @@ resource "azurerm_role_assignment" "unipipe_networking_backend" {
 
 ## How to use this module
 
-Fork the repository and adapt `backend.tf`.
-Create a service principal with the necessary permissions to 
+Fork the repository and adapt `backend.tf` to use your storage account.
 
-Required inputs for this building block
-1. all required variables that have no default value
+When defining the building block, these are the required inputs:
+1. all required variables that have no default value (check the `variables.tf` file)
 2. the following environment variables need to be present: ARM_TENANT_ID (AAD tenant of the subscription of the terraform state storage account), ARM_SUBSCRIPTION_ID (subscription of the terraform state storage account), ARM_CLIENT_ID (service principal object id), ARM_CLIENT_SECRET (service principal secret)
