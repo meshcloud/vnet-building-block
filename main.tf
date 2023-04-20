@@ -13,7 +13,7 @@ terraform {
 }
 
 locals {
-  prefix-spoke = "${var.vnet_prefix}-spoke-${var.location}"
+  prefix-spoke = "${var.vnet_prefix}-spoke-${var.subscription_id}"
 }
 
 resource "azurerm_resource_group" "spoke-vnet-rg" {
