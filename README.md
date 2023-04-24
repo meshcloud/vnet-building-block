@@ -5,10 +5,37 @@ A Terraform Module to configure a vnet connected to your central hub in your pla
 
 - A storage account for terraform state
 - A service principal with permissions on the terraform state storage account and permissions to create resource groups and virtual networks
+- The central hub vnet
 
-Here is an example terraform file for setting up the prerequesites:
+Here is an example terraform file for setting up the storage account, service principal and permissions:
 
 ```hcl
+locals {
+  # Id of the Azure AD tenant that you want to offer your service in.
+  tenant_id = "703c8d27-13e0-4836-8b2e-8390c588cf80" # meshcloud-dev
+
+  # Id of the Azure Subscription that should host the service broker container and state.
+  subscription_id = "497d294f-0f5d-4641-b448-93b32fcd9e93" # likvid-central-services
+
+  # The scope on which the Service Principal will be granted permissions.
+  scope = "/providers/Microsoft.Management/managementGroups/${local.tenant_id}"
+}
+
+provider "azurerm" {
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = true
+    }
+  }
+  tenant_id       = local.tenant_id
+  subscription_id = local.subscription_id
+}
+
+resource "azurerm_resource_group" "unipipe_networking" {
+  name     = "unipipe-networking"
+  location = "West Europe"
+}
+
 #
 # storage for terraform state of service instances
 #
@@ -82,8 +109,9 @@ resource "azurerm_role_assignment" "unipipe_networking_backend" {
 
 ## How to use this module
 
-Fork the repository and adapt `backend.tf` to use your storage account.
-
-When defining the building block, these are the required inputs:
-1. all required variables that have no default value (check the `variables.tf` file)
-2. the following environment variables need to be present: ARM_TENANT_ID (AAD tenant of the subscription of the terraform state storage account), ARM_SUBSCRIPTION_ID (subscription of the terraform state storage account), ARM_CLIENT_ID (service principal object id), ARM_CLIENT_SECRET (service principal secret)
+1. Fork the repository.
+2. Adapt `backend.tf` to use your storage account.
+3. Adapt `main.tf` to use your hub vnet.
+4. Define the building block in meshSack with the required inputs:
+4.1. all required variables that have no default value (check the `variables.tf` file)
+4.2. the following environment variables need to be present: ARM_TENANT_ID (AAD tenant of the subscription of the terraform state storage account), ARM_SUBSCRIPTION_ID (subscription of the terraform state storage account), ARM_CLIENT_ID (service principal object id), ARM_CLIENT_SECRET (service principal secret)
